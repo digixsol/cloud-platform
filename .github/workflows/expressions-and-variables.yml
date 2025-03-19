@@ -1,0 +1,54 @@
+name: expressions-and-variables
+
+run-name: expressions-and-variables | DEBUG ${{ inputs.debug && 'ON' || 'OFF' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug: 
+        type: boolean
+        default: false
+
+env:
+  WORKFLOW_VAR: 'workflow env variable'
+  OVERWRITTEN_VAR: 'overwritten env variable'
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    env:
+      JOB_VAR: 'job level env variable'
+      OVERWRITTEN_VAR: 'job level overwritten variable'
+    steps:
+      - name: display information echo
+        env:
+          STEP_VAR: 'step env variable'
+          step_var_2: 'another step env variable'      
+        run: |
+          echo "step env var - ${{ env.STEP_VAR }}"
+          echo "job env var - ${{ env.JOB_VAR }}"
+          echo "another step env var - $step_var_2"
+          echo "workflow env var - ${{ env.WORKFLOW_VAR }}"
+          echo "overwritten env var - ${{ env.OVERWRITTEN_VAR }}"
+
+  echo2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: display information echo2
+        run: |
+          echo "org var - ${{ vars.ORG_VAR }}"
+          echo "org overwritten var - ${{ vars.OVERWRITTEN_VAR }}"
+          echo "repository var - ${{ vars.REPO_VAR }}"
+          echo "overwritten var - ${{ vars.OVERWRITTEN_VAR }}"
+
+  echo-production:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: display information echo production
+        run: |
+          echo "org var - ${{ vars.ORG_VAR }}"
+          echo "org overwritten var - ${{ vars.OVERWRITTEN_VAR }}"
+          echo "repository var - ${{ vars.REPO_VAR }}"
+          echo "overwritten var - ${{ vars.OVERWRITTEN_VAR }}"
+          echo "environment var - ${{ vars.TARGET_VAR }}"
